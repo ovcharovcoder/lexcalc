@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>LexCalc — Калькулятор процесуальних строків для адвокатів</title>
+    <meta
+      name="description"
+      content="Розрахуйте останній день подачі апеляції, касації або виконавчого листа з урахуванням вихідних, свят та воєнного стану. Безкоштовний інструмент для адвокатів."
+    />
+    <meta name="author" content="LexCalc" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15h-2v-2h2v2zm0-4h-2V7h2v6z'/></svg>"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <span class="logo-icon">⚖️</span>
+          <span class="logo-text"
+            >Lex<span class="logo-highlight">Calc</span></span
+          >
+        </div>
+        <div class="header-actions">
+          <button
+            class="icon-btn"
+            id="historyBtn"
+            aria-label="Історія розрахунків"
+          >
+            <span>📋</span>
+          </button>
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            aria-label="Змінити тему"
+          >
+            <span class="theme-icon-light">🌙</span>
+            <span class="theme-icon-dark">☀️</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="main">
+        <div class="hero">
+          <h1>
+            Калькулятор <span class="gradient-text">процесуальних строків</span>
+          </h1>
+          <p class="subtitle">
+            Розрахуйте останній день для подання апеляції, касації або
+            виконавчого листа.<br />З урахуванням вихідних, свят та воєнного
+            стану.
+          </p>
+        </div>
+
+        <div class="card">
+          <form id="deadlineForm">
+            <!-- Дата отримання рішення -->
+            <div class="form-group">
+              <label for="startDate">
+                <span class="label-icon">📅</span>
+                Дата отримання рішення
+              </label>
+              <div class="date-input-wrapper">
+                <input type="date" id="startDate" name="startDate" required />
+                <span class="calendar-icon">
+                  <svg
+                    class="calendar-svg light-icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V10H19V20ZM19 8H5V6H19V8Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  <svg
+                    class="calendar-svg dark-icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V10H19V20ZM19 8H5V6H19V8Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <!-- Тип процесу -->
+            <div class="form-group">
+              <label for="processType">
+                <span class="label-icon">⚖️</span>
+                Тип судочинства
+              </label>
+              <select id="processType" name="processType">
+                <option value="civil">Цивільний процес (ЦПК)</option>
+                <option value="criminal">Кримінальний процес (КПК)</option>
+                <option value="admin">Адміністративний процес (КАС)</option>
+                <option value="economic">Господарський процес (ГПК)</option>
+              </select>
+            </div>
+
+            <!-- Тип документа -->
+            <div class="form-group">
+              <label for="documentType">
+                <span class="label-icon">📄</span>
+                Який строк потрібно розрахувати?
+              </label>
+              <select id="documentType" name="documentType">
+                <option value="appeal">Апеляційна скарга</option>
+                <option value="cassation">Касаційна скарга</option>
+                <option value="writ">Виконавчий лист</option>
+              </select>
+            </div>
+
+            <!-- Воєнний стан -->
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="martialLaw" name="martialLaw" />
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-text"
+                  >🇺🇦 Воєнний стан (особливий порядок обчислення строків)</span
+                >
+              </label>
+              <div class="hint" id="martialLawHint" style="display: none">
+                ℹ️ Під час воєнного стану процесуальні строки можуть бути
+                зупинені або продовжені. Калькулятор враховує рекомендації ВРП.
+                Рекомендуємо додатково перевірити актуальні роз'яснення.
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Розрахувати строк</button>
+          </form>
+
+          <!-- Результат -->
+          <div id="result" class="result-container" style="display: none">
+            <div class="result-card">
+              <div class="result-header">
+                <span class="result-icon">📌</span>
+                <h3>Останній день подання</h3>
+              </div>
+              <div class="result-date" id="resultDate">—</div>
+              <div class="result-days-left" id="daysLeft"></div>
+              <div class="result-actions">
+                <button
+                  class="btn-icon"
+                  id="copyDateBtn"
+                  aria-label="Скопіювати дату"
+                >
+                  📋 Скопіювати
+                </button>
+                <button
+                  class="btn-icon"
+                  id="printBtn"
+                  aria-label="Роздрукувати"
+                >
+                  🖨️ Друк
+                </button>
+                <button
+                  class="btn-icon"
+                  id="saveHistoryBtn"
+                  aria-label="Зберегти в історію"
+                >
+                  💾 Зберегти
+                </button>
+              </div>
+              <div class="result-details" id="resultDetails">
+                <p id="calculationNote"></p>
+              </div>
+              <button class="btn-secondary" id="resetBtn">
+                🔄 Новий розрахунок
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Додаткова інформація -->
+        <div class="info-section">
+          <div class="info-card">
+            <div class="info-icon">📚</div>
+            <h4>Як це працює?</h4>
+            <p>
+              Калькулятор враховує вихідні дні (субота, неділя) та офіційні
+              свята України. Якщо останній день припадає на вихідний — строк
+              переноситься на наступний робочий день (згідно зі ст. 115 ЦПК, ст.
+              113 КАС, ст. 117 ГПК).
+            </p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">⚠️</div>
+            <h4>Юридичне застереження</h4>
+            <p>
+              Розрахунок має інформаційний характер. Завжди перевіряйте строки
+              самостійно з урахуванням конкретних обставин справи та актуальної
+              практики Верховного Суду.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>© 2024 LexCalc — безкоштовний інструмент для адвокатів</p>
+        <p class="footer-small">
+          Розраховано з любов'ю до юридичної точності ⚖️
+        </p>
+      </footer>
+    </div>
+
+    <!-- Модальне вікно історії -->
+    <div id="historyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📋 Історія розрахунків</h3>
+          <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="historyList" class="history-list">
+            <p class="empty-history">
+              Історія порожня. Збережіть перший розрахунок!
+            </p>
+          </div>
+          <button class="btn-danger" id="clearHistoryBtn">
+            🗑️ Очистити всю історію
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/calculator.js"></script>
+  </body>
+</html>
